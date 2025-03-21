@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+:root {
+  /* Colores principales */
+  --color-primary: #28A745;
+  --color-secondary: #218838;
+
+  /* Variaciones del color primario */
+  --color-primary-light: #34ce57;
+  --color-primary-dark: #1e7e34;
+  --color-primary-hover: #2dbc4e;
+
+  /* Variaciones del color secundario */
+  --color-secondary-light: #28a745;
+  --color-secondary-dark: #1a6b2c;
+  --color-secondary-hover: #25993f;
+}
