@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { FaPlus, FaWifi, FaMobile, FaBox, FaUpload, FaEdit, FaTrash } from 'react-icons/fa'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('phones')
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
 
   const [phoneData, setPhoneData] = useState({
@@ -59,7 +59,7 @@ const AdminPage = () => {
         setCubittProducts(data)
       }
     } catch (error) {
-      setError('Error al cargar los datos')
+      // setError('Error al cargar los datos')
     }
   }
 
@@ -110,17 +110,25 @@ const AdminPage = () => {
 
       if (!response.ok) throw new Error('Error al guardar los datos')
 
-      setMessage(editingId ? 'Producto actualizado exitosamente' : 'Producto agregado exitosamente')
-      setError('')
+      toast.success(editingId ? 'Producto actualizado exitosamente' : 'Producto agregado exitosamente', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light"
+      })
+
       setIsEditing(false)
       setEditingId(null)
-
-      // Limpiar el formulario y recargar datos
       resetForm(type)
-      fetchData() // Asegúrate de tener esta función para recargar los datos
+      fetchData()
     } catch (err) {
-      setError('Error al guardar el producto')
-      setMessage('')
+      toast.error('Error al guardar el producto', {
+        position: "top-right",
+        autoClose: 3000,
+      })
     }
   }
 
@@ -157,9 +165,15 @@ const AdminPage = () => {
 
       const data = await response.json()
       setData((prev: any) => ({...prev, image: data.url}))
-      setMessage('Imagen subida exitosamente')
+      toast.success('Imagen subida exitosamente', {
+        position: "top-right",
+        autoClose: 3000,
+      })
     } catch (error) {
-      setError('Error al subir la imagen')
+      toast.error('Error al subir la imagen', {
+        position: "top-right",
+        autoClose: 3000,
+      })
       console.error('Error:', error)
     } finally {
       setUploading(false)
@@ -226,8 +240,11 @@ const AdminPage = () => {
         })
 
         if (response.ok) {
-          setMessage('Producto eliminado exitosamente')
-          // Recargar datos
+          toast.success('Producto eliminado exitosamente', {
+            position: "top-right",
+            autoClose: 3000,
+          })
+          
           const updatedResponse = await fetch(`http://localhost:5000/api/${type}`)
           const updatedData = await updatedResponse.json()
           if (type === 'phones') setPhones(updatedData)
@@ -235,7 +252,10 @@ const AdminPage = () => {
           else if (type === 'cubitt-products') setCubittProducts(updatedData)
         }
       } catch (error) {
-        setError('Error al eliminar el producto')
+        toast.error('Error al eliminar el producto', {
+          position: "top-right",
+          autoClose: 3000,
+        })
       }
     }
   }
@@ -286,6 +306,7 @@ const AdminPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <ToastContainer />
       {/* Header verde */}
       <header className="bg-[#28A745] text-white py-6">
         <div className="container mx-auto px-4">
@@ -325,18 +346,6 @@ const AdminPage = () => {
             Productos Cubitt
           </button>
         </div>
-
-        {/* Mensajes */}
-        {message && (
-          <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
-            {message}
-          </div>
-        )}
-        {error && (
-          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
-            {error}
-          </div>
-        )}
 
         {/* Tabla de productos */}
         <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
